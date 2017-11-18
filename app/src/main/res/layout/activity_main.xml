@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/restaurant"
+    tools:context="com.share.responsive.sharemarket.MainActivity">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="13dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/Heading"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+
+        />
+
+    <AutoCompleteTextView
+        android:id="@+id/country"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="44dp"
+        android:gravity="center"
+       />
+
+    <Button
+        android:id="@+id/getquote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/country"
+        android:layout_marginLeft="39dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="17dp"
+        android:text="Get Quote"
+        android:textColor="@color/colorPrimary"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/getquote"
+        android:layout_alignBottom="@+id/getquote"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="58dp"
+        android:layout_marginRight="58dp"
+        android:text="Clear"
+        android:textColor="@color/colorPrimary"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/getquote"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="22dp"
+        android:text="Favorites"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
+
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/compatSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fav"
+        android:layout_alignEnd="@+id/clear"
+        android:layout_alignRight="@+id/clear" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignTop="@+id/fav"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp"
+        android:layout_toEndOf="@+id/compatSwitch"
+        android:layout_toRightOf="@+id/compatSwitch"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ref2" />
+
+    <Spinner
+        android:id="@+id/sortby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/getquote"
+        android:layout_alignStart="@+id/getquote"
+        android:layout_alignTop="@+id/orderby"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp" />
+
+    <Spinner
+        android:id="@+id/orderby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/compatSwitch"
+        android:layout_alignStart="@+id/compatSwitch"
+        android:layout_below="@+id/imageButton"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="33dp"
+      />
+
+
+
+
+</RelativeLayout>
