@@ -19,7 +19,7 @@
         android:text="@string/Heading"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="36sp"
+        android:textSize="30sp"
 
         />
 
