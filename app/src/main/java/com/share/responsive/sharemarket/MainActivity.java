@@ -1,11 +1,14 @@
 package com.share.responsive.sharemarket;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FilterQueryProvider;
 import android.widget.SimpleCursorAdapter;
 
@@ -50,11 +53,20 @@ String[] country_names;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 return c;
             }
         };
         a.setFilterQueryProvider(provider);
         actv.setAdapter(a);
+        Button getquote = (Button)findViewById(R.id.getquote);
+        getquote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,DetailsActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }
