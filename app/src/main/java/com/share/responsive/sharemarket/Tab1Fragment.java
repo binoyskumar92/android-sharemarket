@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -40,6 +41,8 @@ public class Tab1Fragment extends Fragment{
     boolean isFavClicked=false;
     StockTable stockTable;
     ArrayList<StockData> stockData=new ArrayList<StockData>();
+    ArrayAdapter<CharSequence> spinnerAdapter;
+    Spinner indicatorSpinner;
     ListView stocklist;
     String symbol="";
     ProgressBar pgbStockData;
@@ -62,6 +65,10 @@ public class Tab1Fragment extends Fragment{
        favorties=(ImageButton)view.findViewById(R.id.favorites);
         stocklist=(ListView)view.findViewById(R.id.stocklist);
         pgbStockData=(ProgressBar)view.findViewById(R.id.stockProgressBar);
+        indicatorSpinner = (Spinner)view.findViewById(R.id.indicators);
+        spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),R.array.indicators,android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        indicatorSpinner.setAdapter(spinnerAdapter);
         symbol=getArguments().getString("symbol");
         if(stockTable!=null){
             if(stockTable.getStockSymbol() == symbol) {

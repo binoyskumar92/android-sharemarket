@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">sharemarket</string>
     <string name="Heading">Stock Market Search</string>
-    <string-array name="country_names">
-        <item>Afghanistan</item>
-        <item>Albania</item>
-        <item>Algeria</item>
-        <item>American Samoa</item>
-        <item>Andora</item>
-        <item>Artic</item>
-        <item>Ahmedabad</item>
+    <string-array name="indicators">
+        <item>Price</item>
+        <item>SMA</item>
+        <item>EMA</item>
+        <item>STOCH</item>
+        <item>RSI</item>
+        <item>ADX</item>
+        <item>CCI</item>
+        <item>BBANDS</item>
+        <item>MACD</item>
     </string-array>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="tab_text_1">Tab 1</string>
