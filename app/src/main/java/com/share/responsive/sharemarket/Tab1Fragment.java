@@ -14,8 +14,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Binoy on 11/20/2017.
@@ -27,6 +30,17 @@ public class Tab1Fragment extends Fragment{
     ArrayList<StockData> stockData=new ArrayList<StockData>();
     ListView stocklist;
     String symbol="";
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -68,6 +82,11 @@ public class Tab1Fragment extends Fragment{
             stockData.add(new StockData("ChangePercent", "0.8", R.drawable.uparrow));
 
         }
+    }
+
+    public void onEvent(StockDataReceivedEvent event) {
+        Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
+
     }
 
     private class CustomAdapter extends ArrayAdapter<StockData> {
