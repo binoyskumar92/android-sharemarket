@@ -2,20 +2,29 @@ package com.share.responsive.sharemarket;
 
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,19 +47,25 @@ import de.greenrobot.event.EventBus;
 public class Tab1Fragment extends Fragment{
     private static final String TAG = "Tab1Fragment";
     ImageButton fb,favorties;
+    Button changeButton;
     boolean isFavClicked=false;
     StockTable stockTable;
+    String stockDataRecevied;
     ArrayList<StockData> stockData=new ArrayList<StockData>();
     ArrayAdapter<CharSequence> spinnerAdapter;
     Spinner indicatorSpinner;
     ListView stocklist;
     String symbol="";
     ProgressBar pgbStockData;
+    String selectedIndicator;
+    WebView graphview;
+
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
     }
+
 
     @Override
     public void onStop() {
@@ -61,21 +76,39 @@ public class Tab1Fragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
        View view=inflater.inflate(R.layout.tab1_fragment,container,false);
-       fb=(ImageButton)view.findViewById(R.id.fb);
+
+        fb=(ImageButton)view.findViewById(R.id.fb);
        favorties=(ImageButton)view.findViewById(R.id.favorites);
         stocklist=(ListView)view.findViewById(R.id.stocklist);
         pgbStockData=(ProgressBar)view.findViewById(R.id.stockProgressBar);
+        changeButton = (Button)view.findViewById(R.id.change);
+        graphview = (WebView)view.findViewById(R.id.graphview);
+
         indicatorSpinner = (Spinner)view.findViewById(R.id.indicators);
         spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),R.array.indicators,android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         indicatorSpinner.setAdapter(spinnerAdapter);
-        symbol=getArguments().getString("symbol");
-        if(stockTable!=null){
-            if(stockTable.getStockSymbol() == symbol) {
-                populateList();
-                initializeList();
+        indicatorSpinner.setSelection(0,false);
+        indicatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    selectedIndicator = adapterView.getItemAtPosition(i).toString();
+                    changeButton.setEnabled(true);
+                changeButton.setTextColor(Color.BLACK);
             }
-        }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        changeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeButton.setEnabled(false);
+                changeButton.setTextColor(Color.GRAY);
+            }
+        });
        favorties.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
@@ -88,7 +121,45 @@ public class Tab1Fragment extends Fragment{
                }
            }
        });
+        symbol=getArguments().getString("symbol");
+        if(stockTable!=null){
+            if(stockTable.getStockSymbol() == symbol) {
+                populateList();
+                initializeList();
+                initializeGraphView();
+            }
+        }
         return view;
+    }
+
+    private void initializeGraphView() {
+        graphview.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                Log.d(TAG, "onPageStarted: ");
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                Log.d(TAG, "onPageFinished: ");
+                graphview.evaluateJavascript("javascript:returnStuff('holymoly')", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String s) {
+                        Toast.makeText(getActivity(),"JS DATA:"+s.toLowerCase(),Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        if(stockDataRecevied!=null) {
+            WebViewMethods webviewobj = new WebViewMethods();
+            webviewobj.setSymbol(symbol);
+            webviewobj.setStockdata(stockDataRecevied);
+            graphview.addJavascriptInterface(webviewobj, "androidMethod");
+        }
+        graphview.getSettings().setJavaScriptEnabled(true);
+        graphview.loadUrl("file:///android_asset/drawgraph.html");
     }
 
 
@@ -106,7 +177,7 @@ public class Tab1Fragment extends Fragment{
         if(stockData.isEmpty()) {
             stockData.add(new StockData("Stock Symbol", stockTable.getStockSymbol(), R.drawable.downarrow));
             stockData.add(new StockData("Last Price", stockTable.getLastPrice(), R.drawable.downarrow));
-            stockData.add(new StockData("Change", stockTable.getChange()+" ("+stockTable.getChangeperc()+")", R.drawable.uparrow));
+            stockData.add(new StockData("Change", stockTable.getChange()+" ("+stockTable.getChangeperc()+"%)", R.drawable.uparrow));
             stockData.add(new StockData("Timestamp", stockTable.getTimestamp(), R.drawable.uparrow));
             stockData.add(new StockData("Open", stockTable.getOpen(), R.drawable.uparrow));
             stockData.add(new StockData("Close", stockTable.getClose(), R.drawable.uparrow));
@@ -117,9 +188,11 @@ public class Tab1Fragment extends Fragment{
 
     public void onEvent(StockDataReceivedEvent event) {
         //Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
-        parseData(event.stockData);
+        stockDataRecevied = event.stockData;
+        parseData(stockDataRecevied);
         populateList();
         initializeList();
+        initializeGraphView();
     }
 
     private float roundTwoDecimals(float d) {
@@ -195,7 +268,7 @@ public class Tab1Fragment extends Fragment{
             Calendar cal = Calendar.getInstance();
             cal.setTime(new SimpleDateFormat("HH:mm:ss").parse(newYorkCurrentTime));
             int hour = cal.get(Calendar.HOUR_OF_DAY); //Get the hour from the calendar
-            if(hour <= 16 && hour >= 9)              // Check if hour is between 8 am and 11pm
+            if(hour < 16 && hour >= 9)              // Check if hour is between 8 am and 11pm
             {
                 timestamp = currDate + ' ' +newYorkCurrentTime+" "+tzz.getDisplayName(false,TimeZone.SHORT);
                 close = prevClose;

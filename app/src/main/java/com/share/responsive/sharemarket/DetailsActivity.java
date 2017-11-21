@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,8 +23,8 @@ public class DetailsActivity extends AppCompatActivity {
     private static final String TAG = "DetailsActivity";
     private ViewPager viewPager;
     private SectionsPageAdapter sectionPageAdapter;
-
     Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,7 @@ public class DetailsActivity extends AppCompatActivity {
         adapter.addFragment(f3,"News");
         viewPager.setAdapter(adapter);
     }
+
     private void requestStockData(String symbol){
 
         RequestQueue queue = Volley.newRequestQueue(DetailsActivity.this);
@@ -65,6 +67,10 @@ public class DetailsActivity extends AppCompatActivity {
                 Log.d(TAG, "onErrorResponse: "+error);
             }
         });
+        getRequest.setRetryPolicy(new DefaultRetryPolicy(
+                8000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(getRequest);
     }
 

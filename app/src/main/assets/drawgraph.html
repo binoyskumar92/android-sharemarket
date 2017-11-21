@@ -1,0 +1,220 @@
+<html>
+<head>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<script>
+	self=this;
+	aTimeSeries = [];
+	self.searchText=androidMethod.getSymbol();
+	self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
+	Math.log10 = function (x) { return Math.log(x) / Math.LN10; };
+
+	function returnStuff(x)
+	{return x;}
+
+	function drawhsgraph(){
+	setHighStocks();
+	}
+	function drawgraph(){
+
+		//self.searchText=androidMethod.getSymbol();
+		//console.log(androidMethod.setStockdata());
+		//getRemoteData(self.searchText);
+		//self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
+		setPriceVolumeGraph();
+	}
+	    function getRemoteData(query) {
+    
+        $.ajax('http://sharemarkethw-env.us-east-1.elasticbeanstalk.com/timeseries?symbol=' + query, {
+            crossDomain: true,
+            error: function () { alert('Server error!. Cant fetch stock data'); },
+            success: function (data) { self.sTimeSeriesData = data;setPriceVolumeGraph(); }
+        });
+        
+    }
+    function setPriceVolumeGraph() {
+        if (!!self.sTimeSeriesData) {
+            var oStockData = self.sTimeSeriesData;
+            var dCurrDate = "";
+            var sTimeSeries = "Time Series (Daily)";
+            aShareVal = [], aVolumeVal = [], aDates = [];
+            for (var i = 0; i < 135; i++) {
+                dCurrDate = Object.keys(oStockData["Time Series (Daily)"])[i];
+                if (!!dCurrDate) {
+                    aDates.push(dCurrDate.split("-")[1] + "/" + dCurrDate.split("-")[2]);
+                    aShareVal.push(parseFloat(oStockData[sTimeSeries][dCurrDate]["4. close"]));
+                    aVolumeVal.push(parseFloat(oStockData[sTimeSeries][dCurrDate]["5. volume"]));
+                } else {
+                    break;
+                }
+                
+            }
+            aVolumeMax = Math.floor(parseInt(Math.max.apply(null, aVolumeVal)) / Math.pow(10, Math.floor((Math.log10(parseInt(Math.max.apply(null, aVolumeVal))))))) * Math.pow(10, Math.floor((Math.log10(parseInt(Math.max.apply(null, aVolumeVal))))));
+            sSymbol = oStockData["Meta Data"]["2. Symbol"];
+            drawAreaChart();
+        }
+    }
+    function drawAreaChart() {
+        var d = new Date();
+        var today = [d.getMonth() + 1, d.getDate(), d.getFullYear()].join('/');
+        aChart = Highcharts.chart('id_highchartgraph', {
+            chart: {
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift'
+            },
+            title: {
+                text: self.searchText + ' Stock Price and Volume'
+            },
+            subtitle: {
+                text: '<a href="https://www.alphavantage.co/" target="_blank" class=>Source : Alpha Vantage</a>',
+                useHTML: true
+            },
+            xAxis: {
+                type:'datetime',
+                categories: aDates.slice().reverse(),
+                tickInterval: 5,
+                tickPixelInterval: 20
+            }, yAxis: [{
+                //min: parseInt(Math.min.apply(null, aShareVal) - 10) > 0 ? parseInt(Math.min.apply(null, aShareVal) - 10) : 0,
+                min: 0,
+                startOnTick: true,
+                endOnTick: true,
+                title: {
+                    text: 'Stock Price'
+                },
+                labels: {
+                    format: '{value}'
+                }
+            }, {
+                lineWidth: 1,
+                tickInterval: aVolumeMax / 2,
+                endOnTick: false,
+                opposite: true,
+                title: {
+                    text: 'Volume'
+                }
+            }], legend: {
+                enabled: true,
+            },
+            tooltip: {
+                xDateFormat: '%m/%d'
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false,
+                    pointWidth: 0.8,
+
+                }
+            },
+            series: [{
+                type: 'area',
+                data: aShareVal.slice().reverse(),
+                lineColor: Highcharts.getOptions().colors[11],
+                color: '#0000FF',
+                fillOpacity: 0.1,
+                lineWidth: 0.5,
+                name: "Price"
+
+            }, {
+                type: 'column',
+                name: "Volume",
+                yAxis: 1,
+                // borderColor: '#303030',
+                color: Highcharts.getOptions().colors[8],
+                data: aVolumeVal.slice().reverse()
+
+            }]
+        });
+        self.showPrgIndicator = true;
+    }
+    function setHighStocks() {
+
+        var dCurrDate = "";
+        var aTemp = [];
+        var oStockData = self.sTimeSeriesData;
+        if (!!oStockData) {
+            if (aTimeSeries.length == 0) {
+
+                for (var i = 0; i < 1000; i++) {
+                    aTemp = [];
+                    dCurrDate = Object.keys(oStockData["Time Series (Daily)"])[i];
+                    if (!dCurrDate) { break; }
+                    aTemp.push(new Date(dCurrDate).getTime());
+                    aTemp.push(parseFloat(oStockData["Time Series (Daily)"][dCurrDate]["4. close"]));
+                    aTimeSeries.push(aTemp);
+                }
+            }
+
+            Highcharts.stockChart('id_highchartgraph', {
+                rangeSelector: {
+
+                    buttons: [{
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    }, {
+                        type: 'month',
+                        count: 3,
+                        text: '3m'
+                    }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'ytd',
+                        text: 'YTD'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 0
+                },
+
+                title: {
+                    text: self.searchText + ' Stock Price'
+                },
+                subtitle: {
+                    text: '<a href="https://www.alphavantage.co/" target="_blank" class=>Source : Alpha Vantage</a>',
+                    useHTML: true
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Stock Value'
+                    }
+                },
+                series: [{
+                    type: 'area',
+                    name: 'AAPL',
+                    data: aTimeSeries.slice().reverse(),
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                }]
+            });
+        }
+    }
+</script>
+<body>
+<div id="id_areagraph"><button onclick="drawgraph()">area</button></div>
+<div id="id_stock"><button onclick="drawhsgraph()">highstock</button></div>
+<div id="id_highchartgraph"></div>
+<div id="id_highstock"></div>
+	</body>
+</html>
