@@ -80,7 +80,6 @@ String[] country_names;
                     bundle.putString("symbol", selectedSymbol);
                     Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
                     intent.putExtras(bundle);
-                    selectedSymbol="";
                     startActivity(intent);
                 }else{
                     Toast.makeText(getApplicationContext(),"Please select a valid symbol",Toast.LENGTH_SHORT).show();
@@ -88,6 +87,13 @@ String[] country_names;
             }
         });
         Button clear = (Button)findViewById(R.id.clear);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                actv.setText("");
+                selectedSymbol="";
+            }
+        });
 
     }
 }

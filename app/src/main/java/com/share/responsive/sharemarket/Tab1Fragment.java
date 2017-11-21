@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,6 +63,12 @@ public class Tab1Fragment extends Fragment{
         stocklist=(ListView)view.findViewById(R.id.stocklist);
         pgbStockData=(ProgressBar)view.findViewById(R.id.stockProgressBar);
         symbol=getArguments().getString("symbol");
+        if(stockTable!=null){
+            if(stockTable.getStockSymbol() == symbol) {
+                populateList();
+                initializeList();
+            }
+        }
        favorties.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
@@ -78,6 +83,8 @@ public class Tab1Fragment extends Fragment{
        });
         return view;
     }
+
+
     public Activity getCurrentActivity(){
         return getActivity();
     }
@@ -102,9 +109,8 @@ public class Tab1Fragment extends Fragment{
     }
 
     public void onEvent(StockDataReceivedEvent event) {
-        Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
         parseData(event.stockData);
-
         populateList();
         initializeList();
     }
