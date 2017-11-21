@@ -26,6 +26,7 @@ public class Tab1Fragment extends Fragment{
     boolean isFavClicked=false;
     ArrayList<StockData> stockData=new ArrayList<StockData>();
     ListView stocklist;
+    String symbol="";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class Tab1Fragment extends Fragment{
        fb=(ImageButton)view.findViewById(R.id.fb);
        favorties=(ImageButton)view.findViewById(R.id.favorites);
         stocklist=(ListView)view.findViewById(R.id.stocklist);
+        symbol=getArguments().getString("symbol");
        favorties.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {

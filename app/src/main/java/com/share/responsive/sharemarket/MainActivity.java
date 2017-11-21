@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FilterQueryProvider;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 
@@ -20,13 +22,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-AutoCompleteTextView autoCompleteTextView;
+AutoCompleteTextView actv;
+String selectedSymbol="";
 String[] country_names;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AutoCompleteTextView actv = (AutoCompleteTextView) findViewById(R.id.country);
+        actv = (AutoCompleteTextView) findViewById(R.id.country);
         actv.setThreshold(1);
         String[] from = { "name" };
         int[] to = { android.R.id.text1};
@@ -59,12 +62,29 @@ String[] country_names;
         };
         a.setFilterQueryProvider(provider);
         actv.setAdapter(a);
+       actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+               MatrixCursor matrix =  (MatrixCursor)parent.getItemAtPosition(position);
+               selectedSymbol = matrix.getString(1);
+               selectedSymbol = selectedSymbol.split("-")[0].trim();
+           }
+       });
+
         Button getquote = (Button)findViewById(R.id.getquote);
         getquote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this,DetailsActivity.class);
-                startActivity(intent);
+                if(selectedSymbol != "") {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("symbol", selectedSymbol);
+                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                    intent.putExtras(bundle);
+                    selectedSymbol="";
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getApplicationContext(),"Please select a valid symbol",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
