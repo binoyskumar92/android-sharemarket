@@ -87,6 +87,7 @@ String[] country_names;
                 }
             }
         });
+        Button clear = (Button)findViewById(R.id.clear);
 
     }
 }

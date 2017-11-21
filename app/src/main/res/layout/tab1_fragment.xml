@@ -47,13 +47,24 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/facebook" />
 
+        <ProgressBar
+            android:id="@+id/stockProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_below="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
         <ListView
 
             android:id="@+id/stocklist"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/textView3"
-            android:layout_marginTop="20dp" />
+            android:layout_below="@+id/stockProgressBar"
+            >
+
+        </ListView>
 
     </RelativeLayout>
 
