@@ -118,17 +118,16 @@ public class Tab1Fragment extends Fragment{
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isWebViewLoaded) {
+                if(isWebViewLoaded){
                     graphview.evaluateJavascript("javascript:drawgraph()", new ValueCallback<String>() {
                         @Override
                         public void onReceiveValue(String s) {
                             Log.d(TAG, "onReceiveValue from webview: Graph loaded");
                         }
                     });
-
-                    changeButton.setEnabled(false);
-                    changeButton.setTextColor(Color.GRAY);
                 }
+                changeButton.setEnabled(false);
+                changeButton.setTextColor(Color.GRAY);
             }
         });
        favorties.setOnClickListener(new View.OnClickListener() {
