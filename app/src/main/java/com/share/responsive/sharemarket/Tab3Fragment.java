@@ -2,6 +2,8 @@ package com.share.responsive.sharemarket;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -137,13 +139,20 @@ public class Tab3Fragment extends Fragment {
             if(itemView==null){
                 itemView=getLayoutInflater().inflate(R.layout.newslist,parent,false);
             }
-            NewsFeed currNewsFeed = newsfeed.get(position);
+            final NewsFeed currNewsFeed = newsfeed.get(position);
             TextView title=(TextView)itemView.findViewById(R.id.newstitle);
             title.setText(currNewsFeed.getTitle());
             TextView author=(TextView)itemView.findViewById(R.id.newsauthor);
             author.setText("Author: "+currNewsFeed.getAuthor());
             TextView pubdate=(TextView)itemView.findViewById(R.id.newsdate);
             pubdate.setText("Date: "+currNewsFeed.getPubDate());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(currNewsFeed.getLink()));
+                    startActivity(browserIntent);
+                }
+            });
             return itemView;
         }
     }
