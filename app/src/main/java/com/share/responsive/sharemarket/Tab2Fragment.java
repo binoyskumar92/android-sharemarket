@@ -57,7 +57,6 @@ public class Tab2Fragment extends Fragment {
         }else {
             stockDataRecevied = event.stockData;
             initilaizeHighStock();
-
         }
     }
 

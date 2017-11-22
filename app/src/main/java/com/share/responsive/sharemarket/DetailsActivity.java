@@ -21,6 +21,7 @@ import de.greenrobot.event.EventBus;
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String TAG = "DetailsActivity";
+    private static final String TIME_SERIES_URL = "http://sharemarkethw-env.us-east-1.elasticbeanstalk.com/timeseries?symbol=";
     private ViewPager viewPager;
     private SectionsPageAdapter sectionPageAdapter;
     Bundle bundle;
@@ -56,7 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
     private void requestStockData(String symbol){
 
         RequestQueue queue = Volley.newRequestQueue(DetailsActivity.this);
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, "http://sharemarkethw-env.us-east-1.elasticbeanstalk.com/timeseries?symbol="+symbol, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, TIME_SERIES_URL+symbol, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 EventBus.getDefault().post(new StockDataReceivedEvent(response.toString()));
@@ -72,6 +73,7 @@ public class DetailsActivity extends AppCompatActivity {
                 15000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         queue.add(getRequest);
     }
 
