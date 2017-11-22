@@ -211,7 +211,7 @@ public class Tab1Fragment extends Fragment{
     public void onEvent(StockDataReceivedEvent event) {
         //Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
         if(event.stockData.equalsIgnoreCase("Server Timeout. Try again later.") || event.stockData.equals("{}")){
-            Toast.makeText(getActivity(),event.stockData, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),"Server error. Try again later.", Toast.LENGTH_LONG).show();
             pgbStockData.setVisibility(View.INVISIBLE);
         }else {
             stockDataRecevied = event.stockData;

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -27,6 +28,12 @@ public class DetailsActivity extends AppCompatActivity {
     Bundle bundle;
 
     @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
@@ -35,6 +42,9 @@ public class DetailsActivity extends AppCompatActivity {
         setupViewPager(viewPager);
         TabLayout tabLayout=(TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+       ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(bundle.getCharSequence("symbol"));
 
         //request stock data
         requestStockData(bundle.getString("symbol"));
@@ -65,7 +75,8 @@ public class DetailsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "onErrorResponse: "+error);
+                Log.e(TAG, "onErrorResponse: "+error);
+                error.printStackTrace();
                 EventBus.getDefault().post(new StockDataReceivedEvent("Server Timeout. Try again later."));
             }
         });
