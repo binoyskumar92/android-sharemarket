@@ -141,9 +141,9 @@ public class Tab3Fragment extends Fragment {
             TextView title=(TextView)itemView.findViewById(R.id.newstitle);
             title.setText(currNewsFeed.getTitle());
             TextView author=(TextView)itemView.findViewById(R.id.newsauthor);
-            author.setText(currNewsFeed.getAuthor());
+            author.setText("Author: "+currNewsFeed.getAuthor());
             TextView pubdate=(TextView)itemView.findViewById(R.id.newsdate);
-            pubdate.setText(currNewsFeed.getPubDate());
+            pubdate.setText("Date: "+currNewsFeed.getPubDate());
             return itemView;
         }
     }
