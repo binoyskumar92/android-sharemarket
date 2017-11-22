@@ -65,10 +65,11 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "onErrorResponse: "+error);
+                EventBus.getDefault().post(new StockDataReceivedEvent("Server Timeout. Try again later."));
             }
         });
         getRequest.setRetryPolicy(new DefaultRetryPolicy(
-                8000,
+                15000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(getRequest);

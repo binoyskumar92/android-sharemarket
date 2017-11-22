@@ -201,7 +201,7 @@
                 },
                 series: [{
                     type: 'area',
-                    name: 'AAPL',
+                    name: self.searchText,
                     data: aTimeSeries.slice().reverse(),
                     tooltip: {
                         valueDecimals: 2
@@ -212,8 +212,8 @@
     }
 </script>
 <body>
-<div id="id_areagraph"><button onclick="drawgraph()">area</button></div>
-<div id="id_stock"><button onclick="drawhsgraph()">highstock</button></div>
+<div id="id_areagraph" style="visibility:hidden"><button onclick="drawgraph()">area</button></div>
+<div id="id_stock" style="visibility:hidden"><button onclick="drawhsgraph()">highstock</button></div>
 <div id="id_highchartgraph"></div>
 <div id="id_highstock"></div>
 	</body>

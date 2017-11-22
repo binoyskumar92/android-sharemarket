@@ -59,19 +59,31 @@ public class Tab1Fragment extends Fragment{
     ProgressBar pgbStockData;
     String selectedIndicator;
     WebView graphview;
-
+    private boolean isWebViewLoaded=false;
+    private boolean eventRegistered =false;
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if(!eventRegistered) {
+            EventBus.getDefault().register(this);
+            eventRegistered=true;
+        }
+
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -92,9 +104,10 @@ public class Tab1Fragment extends Fragment{
         indicatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    selectedIndicator = adapterView.getItemAtPosition(i).toString();
-                    changeButton.setEnabled(true);
+                selectedIndicator = adapterView.getItemAtPosition(i).toString();
+                changeButton.setEnabled(true);
                 changeButton.setTextColor(Color.BLACK);
+
             }
 
             @Override
@@ -105,8 +118,17 @@ public class Tab1Fragment extends Fragment{
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeButton.setEnabled(false);
-                changeButton.setTextColor(Color.GRAY);
+                if(isWebViewLoaded) {
+                    graphview.evaluateJavascript("javascript:drawgraph()", new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String s) {
+                            Log.d(TAG, "onReceiveValue from webview: Graph loaded");
+                        }
+                    });
+
+                    changeButton.setEnabled(false);
+                    changeButton.setTextColor(Color.GRAY);
+                }
             }
         });
        favorties.setOnClickListener(new View.OnClickListener() {
@@ -144,12 +166,13 @@ public class Tab1Fragment extends Fragment{
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 Log.d(TAG, "onPageFinished: ");
-                graphview.evaluateJavascript("javascript:returnStuff('holymoly')", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String s) {
-                        Toast.makeText(getActivity(),"JS DATA:"+s.toLowerCase(),Toast.LENGTH_SHORT).show();
-                    }
-                });
+                isWebViewLoaded=true;
+//                graphview.evaluateJavascript("javascript:returnStuff('holymoly')", new ValueCallback<String>() {
+//                    @Override
+//                    public void onReceiveValue(String s) {
+//                        Toast.makeText(getActivity(),"JS DATA:"+s.toLowerCase(),Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         });
         if(stockDataRecevied!=null) {
@@ -188,11 +211,16 @@ public class Tab1Fragment extends Fragment{
 
     public void onEvent(StockDataReceivedEvent event) {
         //Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
-        stockDataRecevied = event.stockData;
-        parseData(stockDataRecevied);
-        populateList();
-        initializeList();
-        initializeGraphView();
+        if(event.stockData.equalsIgnoreCase("Server Timeout. Try again later.") || event.stockData.equals("{}")){
+            Toast.makeText(getActivity(),event.stockData, Toast.LENGTH_LONG).show();
+            pgbStockData.setVisibility(View.INVISIBLE);
+        }else {
+            stockDataRecevied = event.stockData;
+            parseData(stockDataRecevied);
+            populateList();
+            initializeList();
+            initializeGraphView();
+        }
     }
 
     private float roundTwoDecimals(float d) {
@@ -242,7 +270,9 @@ public class Tab1Fragment extends Fragment{
             setTimeStampNClose(jsonArray.getString(0),jsonArray.getString(1),jsonObject.getJSONObject(jsonArray.getString(1)).getString("4. close"),jsonObject.getJSONObject(jsonArray.getString(0)).getString("4. close"));
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Toast.makeText(getActivity(),"Server Error. Try again later", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "parseData: "+e.getMessage());
+            pgbStockData.setVisibility(View.INVISIBLE);
         }
         // String dCurrDate = Object.keys(oStockData["Time Series (Daily)"])[0];
        // var dPrevDate = Object.keys(oStockData["Time Series (Daily)"])[1];
@@ -270,14 +300,14 @@ public class Tab1Fragment extends Fragment{
             int hour = cal.get(Calendar.HOUR_OF_DAY); //Get the hour from the calendar
             if(hour < 16 && hour >= 9)              // Check if hour is between 8 am and 11pm
             {
-                timestamp = currDate + ' ' +newYorkCurrentTime+" "+tzz.getDisplayName(false,TimeZone.SHORT);
+                timestamp = currDate + ' ' +newYorkCurrentTime+" EST";
                 close = prevClose;
             }else{
-                timestamp = currDate + " 16:00:00 "+tzz.getDisplayName(false,TimeZone.SHORT);
+                timestamp = currDate + " 16:00:00 EST";
                 close = currClose;
             }
             stockTable.setTimestamp(timestamp);
-            stockTable.setClose(close);
+            stockTable.setClose(roundTwoDecimals(Float.parseFloat(close))+"");
         }
         } catch (ParseException e) {
             e.printStackTrace();
