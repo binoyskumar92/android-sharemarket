@@ -1,14 +1,18 @@
 package com.share.responsive.sharemarket;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -24,7 +28,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.greenrobot.event.EventBus;
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 /**
@@ -49,6 +52,14 @@ public class Tab3Fragment extends Fragment {
         }
     }
 
+    private void initializeNewsList() {
+        ArrayAdapter<NewsFeed> newsAdapter=new CustomNewsListAdapter();
+        newsList.setAdapter(newsAdapter);
+       // UIUtils.setListViewHeightBasedOnItems(newsList);
+
+
+    }
+
     private void requestNewsData() {
         //News
         if (symbol == null) {
@@ -63,6 +74,7 @@ public class Tab3Fragment extends Fragment {
                             XmlToJson xmlToJson = new XmlToJson.Builder(response).build();
                             newsData = xmlToJson.toJson();
                             parseJsonNews(newsData);
+                            initializeNewsList();
                         } catch (Exception e) {
                             e.printStackTrace();
                             ;
@@ -99,20 +111,41 @@ public class Tab3Fragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab3_fragment, container, false);
         symbol = getArguments().getString("symbol");
         newsList = (ListView) view.findViewById(R.id.news);
-
+        if(newsfeed!=null){
+            initializeNewsList();
+        }
         return view;
+    }
+    public Activity getCurrentActivity(){
+        return getActivity();
+    }
+    private class CustomNewsListAdapter extends ArrayAdapter<NewsFeed> {
+        public CustomNewsListAdapter() {
+            super(getCurrentActivity(), R.layout.newslist, newsfeed);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView=convertView;
+            if(itemView==null){
+                itemView=getLayoutInflater().inflate(R.layout.newslist,parent,false);
+            }
+            NewsFeed currNewsFeed = newsfeed.get(position);
+            TextView title=(TextView)itemView.findViewById(R.id.newstitle);
+            title.setText(currNewsFeed.getTitle());
+            TextView author=(TextView)itemView.findViewById(R.id.newsauthor);
+            author.setText(currNewsFeed.getAuthor());
+            TextView pubdate=(TextView)itemView.findViewById(R.id.newsdate);
+            pubdate.setText(currNewsFeed.getPubDate());
+            return itemView;
+        }
     }
 
 }
