@@ -240,6 +240,7 @@ public class Tab1Fragment extends Fragment{
         }
         return isHoliday;
     }
+
     private void parseData(String stockData) {
         String sMeta = "Meta Data";
         String sTimeSeries = "Time Series (Daily)";

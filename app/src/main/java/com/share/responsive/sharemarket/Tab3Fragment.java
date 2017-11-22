@@ -28,7 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
@@ -94,6 +99,24 @@ public class Tab3Fragment extends Fragment {
         );
         queue.add(newsRequest);
     }
+    private String getPSTTime(String pubDate){
+        Calendar cal = Calendar.getInstance();
+        String[] splitDate = pubDate.split(" ");
+        //cal.setTime();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        TimeZone tzz = TimeZone.getTimeZone("UTC");
+        format.setTimeZone(tzz);
+        Date pstDate;
+        String time ="";
+        try {
+             pstDate = format.parse(splitDate[4]);
+             time = pstDate.toString().split(" ")[3] + " " + pstDate.toString().split(" ")[4];
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return splitDate[0]+" "+splitDate[1]+" "+splitDate[2]+" "+splitDate[3]+" "+splitDate[4]+" GMT";
+        }
+        return splitDate[0]+" "+splitDate[1]+" "+splitDate[2]+" "+splitDate[3]+" "+ time;
+    }
 
     private void parseJsonNews(JSONObject newsData) {
         try {
@@ -145,7 +168,7 @@ public class Tab3Fragment extends Fragment {
             TextView author=(TextView)itemView.findViewById(R.id.newsauthor);
             author.setText("Author: "+currNewsFeed.getAuthor());
             TextView pubdate=(TextView)itemView.findViewById(R.id.newsdate);
-            pubdate.setText("Date: "+currNewsFeed.getPubDate());
+            pubdate.setText("Date: "+getPSTTime(currNewsFeed.getPubDate()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
