@@ -12,6 +12,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import de.greenrobot.event.EventBus;
@@ -24,6 +25,7 @@ public class Tab2Fragment extends Fragment {
     private static final String TAG = "Tab2Fragment";
     WebView highstockview;
     String stockDataRecevied;
+    TextView errortv;
     private boolean eventRegistered=false;
     ProgressBar pgbhStock;
     @Override
@@ -47,6 +49,7 @@ public class Tab2Fragment extends Fragment {
        View view=inflater.inflate(R.layout.tab2_fragment,container,false);
         highstockview=(WebView)view.findViewById(R.id.highstockview);
         pgbhStock = (ProgressBar)view.findViewById(R.id.hstockprogressBar);
+        errortv=(TextView)view.findViewById(R.id.errortvtab2);
         return view;
     }
     public void onEvent(StockDataReceivedEvent event) {

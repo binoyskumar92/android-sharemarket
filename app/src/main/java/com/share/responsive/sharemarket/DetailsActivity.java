@@ -27,6 +27,7 @@ public class DetailsActivity extends AppCompatActivity {
     private SectionsPageAdapter sectionPageAdapter;
     Bundle bundle;
 
+    //Method to deal with backbutton in action bar
     @Override
     public boolean onSupportNavigateUp() {
         finish();

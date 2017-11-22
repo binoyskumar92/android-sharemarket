@@ -7,6 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/news"
-        android:layout_marginBottom="?attr/actionBarSize"/> <!--show the last item in listview-->
+       /> <!--  android:layout_marginBottom="?attr/actionBarSize" show the last item in listview-->
 
 </RelativeLayout>
