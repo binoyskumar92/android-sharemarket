@@ -22,6 +22,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FilterQueryProvider;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
@@ -61,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<FavoritesInfo> favInfoFromPreference;
     ArrayAdapter<FavoritesInfo> favListAdapter;
     ProgressBar pgbRefresh;
-    int FavoriteRefreshedCount = 0;
+    int favoriteAutoRefreshedCount = 0;
+    ImageButton singlrefresh;
 
     @Override
     protected void onStart() {
@@ -153,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedSymbol = "";
             }
         });
+
+        //Auto Refresh
         switchCompat = (SwitchCompat) findViewById(R.id.compatSwitch);
         final Handler handler = new Handler();
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -164,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
                     handler.postDelayed(new Runnable(){
                         public void run(){
-                            FavoriteRefreshedCount = 0;
+                            favoriteAutoRefreshedCount = 0;
                             refreshFavList();
                             handler.postDelayed(this, delay);
                         }
@@ -173,6 +177,16 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     handler.removeCallbacksAndMessages(null);
                 }
+            }
+        });
+
+        //Manual single refresh
+        singlrefresh=(ImageButton)findViewById(R.id.singlerefresh);
+        singlrefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favoriteAutoRefreshedCount = 0;
+                refreshFavList();
             }
         });
         pgbRefresh = (ProgressBar)findViewById(R.id.pgbRefresh);
@@ -206,8 +220,8 @@ public class MainActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 //Updating the existing values
                 UIUtils.addFavToSharedPreference(favoritesInfo.getSymbol(), gson.toJson(favoritesInfo));
-                FavoriteRefreshedCount++;
-                if (FavoriteRefreshedCount == UIUtils.getSharedPreferenceSize()) {
+                favoriteAutoRefreshedCount++;
+                if (favoriteAutoRefreshedCount == UIUtils.getSharedPreferenceSize()) {
                     pgbRefresh.setVisibility(View.GONE);
                     redrawFavList();
                 }

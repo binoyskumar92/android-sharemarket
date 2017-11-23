@@ -89,7 +89,7 @@
         android:layout_alignRight="@+id/clear" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/singlerefresh"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignTop="@+id/fav"
@@ -100,7 +100,8 @@
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ref2" />
+        app:srcCompat="@drawable/refresh_real"/>
+
 
     <Spinner
         android:id="@+id/sortby"
@@ -118,7 +119,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/compatSwitch"
         android:layout_alignStart="@+id/compatSwitch"
-        android:layout_below="@+id/imageButton"
+        android:layout_below="@+id/singlerefresh"
         android:layout_marginLeft="13dp"
         android:layout_marginStart="13dp"
         android:layout_marginTop="33dp"
@@ -134,12 +135,13 @@
 
 
     </ListView>
+
     <ProgressBar
         android:id="@+id/pgbRefresh"
-       android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"/>
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>
