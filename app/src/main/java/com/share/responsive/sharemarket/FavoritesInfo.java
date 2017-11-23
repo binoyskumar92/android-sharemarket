@@ -16,6 +16,12 @@ public class FavoritesInfo {
         this.change = change;
         this.changeperc = changeperc;
     }
+    public FavoritesInfo() {
+        this.symbol = "";
+        this.price = "";
+        this.change = "";
+        this.changeperc = "";
+    }
 
     public String getSymbol() {
         return symbol;

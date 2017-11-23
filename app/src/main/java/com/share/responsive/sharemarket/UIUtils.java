@@ -83,4 +83,7 @@ public class UIUtils {
         }
         return favoritesInfos;
     }
+    public static int getSharedPreferenceSize(){
+        return pref.getAll().size();
+    }
 }

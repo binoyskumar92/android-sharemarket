@@ -43,7 +43,7 @@ import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 
 public class Tab3Fragment extends Fragment {
     private static final String TAG = "Tab3Fragment";
-    private static final String NEWS_URL = "http://seekingalpha.com/api/sa/combined/";
+    private static final String NEWS_URL = "http://sharemarkethw-env.us-east-1.elasticbeanstalk.com/seekingnews?symbol=";
     ListView newsList;
     String symbol;
     JSONObject newsData;
