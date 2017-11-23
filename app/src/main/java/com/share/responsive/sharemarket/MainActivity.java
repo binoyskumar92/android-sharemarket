@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FilterQueryProvider;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
@@ -25,10 +26,15 @@ public class MainActivity extends AppCompatActivity {
 AutoCompleteTextView actv;
 String selectedSymbol="";
 String[] country_names;
+ListView favlistview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //initialise sharedpreferences
+        UIUtils.initialiseSharedPreference(getApplicationContext());
+
         actv = (AutoCompleteTextView) findViewById(R.id.country);
         actv.setThreshold(1);
         String[] from = { "name" };
@@ -94,6 +100,8 @@ String[] country_names;
                 selectedSymbol="";
             }
         });
+    //Favorite Listview
+        favlistview=(ListView)findViewById(R.id.favoriteslist);
 
     }
 }

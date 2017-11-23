@@ -26,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,7 +90,6 @@ public class Tab1Fragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
        View view=inflater.inflate(R.layout.tab1_fragment,container,false);
-
         fb=(ImageButton)view.findViewById(R.id.fb);
        favorties=(ImageButton)view.findViewById(R.id.favorites);
         stocklist=(ListView)view.findViewById(R.id.stocklist);
@@ -101,6 +102,8 @@ public class Tab1Fragment extends Fragment{
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         indicatorSpinner.setAdapter(spinnerAdapter);
         indicatorSpinner.setSelection(0,false);
+        symbol=getArguments().getString("symbol");
+
         indicatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -109,12 +112,12 @@ public class Tab1Fragment extends Fragment{
                 changeButton.setTextColor(Color.BLACK);
 
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
+
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,19 +133,29 @@ public class Tab1Fragment extends Fragment{
                 changeButton.setTextColor(Color.GRAY);
             }
         });
+
        favorties.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
+               FavoritesInfo selectedFavoritesInfo=null;
+               Gson gson=new Gson();
+               if(stockTable!=null) {
+                   selectedFavoritesInfo = new FavoritesInfo(stockTable.getStockSymbol(), stockTable.getLastPrice(), stockTable.getChange(), stockTable.getChangeperc());
+               }
+
                if(!isFavClicked){
                favorties.setImageResource(R.drawable.filled);
                isFavClicked=true;
+               UIUtils.addFavToSharedPreference(selectedFavoritesInfo.getSymbol(),gson.toJson(selectedFavoritesInfo));
                }else{
                    favorties.setImageResource(R.drawable.empty);
                    isFavClicked=false;
+                   UIUtils.removeFavToSharedPreference(selectedFavoritesInfo.getSymbol());
                }
            }
        });
-        symbol=getArguments().getString("symbol");
+
+        setFavoriteStatefromSharedPreference();
         if(stockTable!=null){
             if(stockTable.getStockSymbol() == symbol) {
                 populateList();
@@ -152,7 +165,12 @@ public class Tab1Fragment extends Fragment{
         }
         return view;
     }
-
+    private void setFavoriteStatefromSharedPreference(){
+        if(UIUtils.getFavFromSharedPreference(symbol)!=null){
+            favorties.setImageResource(R.drawable.filled);
+            isFavClicked=true;
+        }
+    }
     private void initializeGraphView() {
         graphview.setWebViewClient(new WebViewClient(){
             @Override

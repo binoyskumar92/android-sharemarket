@@ -1,5 +1,7 @@
 package com.share.responsive.sharemarket;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -10,7 +12,8 @@ import android.widget.ListView;
  */
 
 public class UIUtils {
-
+    public static SharedPreferences pref;
+    public static SharedPreferences.Editor editor;
     /**
      * Sets ListView height dynamically based on the height of the items.
      *
@@ -47,6 +50,22 @@ public class UIUtils {
         } else {
             return false;
         }
+
+    }
+    public static void initialiseSharedPreference(Context context){
+        pref = context.getSharedPreferences("FavoritesPref", Context.MODE_PRIVATE); // 0 - for private mode
+        editor = pref.edit();
+    }
+    public static void addFavToSharedPreference(String key,String value){
+        editor.putString(key, value);
+        editor.commit();
+    }
+    public static void removeFavToSharedPreference(String key){
+        editor.remove(key);
+        editor.commit();
+    }
+    public static String getFavFromSharedPreference(String key){
+       return pref.getString(key,null);
 
     }
 }

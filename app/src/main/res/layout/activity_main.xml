@@ -7,6 +7,8 @@
     android:background="@drawable/restaurant"
     tools:context="com.share.responsive.sharemarket.MainActivity">
 
+
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
@@ -123,6 +125,12 @@
         android:layout_marginTop="33dp"
       />
 
+    <ListView
+        android:id="@+id/favoriteslist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/orderby"
+        android:layout_marginTop="5dp" />
 
 
 

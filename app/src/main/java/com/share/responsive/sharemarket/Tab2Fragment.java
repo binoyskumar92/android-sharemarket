@@ -57,6 +57,8 @@ public class Tab2Fragment extends Fragment {
         if(event.stockData.equalsIgnoreCase("Server Timeout. Try again later.") || event.stockData.equals("{}")){
             Toast.makeText(getActivity(),"Server error. Try again later.", Toast.LENGTH_SHORT).show();
             pgbhStock.setVisibility(View.GONE);
+            errortv.setVisibility(View.VISIBLE);
+            errortv.setText("Failed to load data.");
             Log.e(TAG, "onEvent: ");
         }else {
             stockDataRecevied = event.stockData;
