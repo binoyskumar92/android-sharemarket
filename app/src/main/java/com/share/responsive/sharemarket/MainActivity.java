@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     android.support.v7.widget.SwitchCompat switchCompat;
     ArrayList<FavoritesInfo> favInfoFromPreference;
     ArrayAdapter<FavoritesInfo> favListAdapter;
+    ProgressBar pgbRefresh;
     int FavoriteRefreshedCount = 0;
 
     @Override
@@ -173,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        pgbRefresh = (ProgressBar)findViewById(R.id.pgbRefresh);
         //Favorite Listview
         favlistview = (ListView) findViewById(R.id.favoriteslist);
 
@@ -189,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
     private void refreshFavList() {
         ArrayList<FavoritesInfo> listFavItems = UIUtils.getAllItemsfromSharedPreference();
         for (int i = 0; i < listFavItems.size(); i++) {
+            pgbRefresh.setVisibility(View.VISIBLE);
             requestTimeSeriesData(listFavItems.get(i).getSymbol());
         }
     }
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 UIUtils.addFavToSharedPreference(favoritesInfo.getSymbol(), gson.toJson(favoritesInfo));
                 FavoriteRefreshedCount++;
                 if (FavoriteRefreshedCount == UIUtils.getSharedPreferenceSize()) {
+                    pgbRefresh.setVisibility(View.GONE);
                     redrawFavList();
                 }
             }
