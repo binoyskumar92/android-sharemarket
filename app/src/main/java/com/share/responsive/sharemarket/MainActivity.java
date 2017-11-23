@@ -3,16 +3,22 @@ package com.share.responsive.sharemarket;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -21,12 +27,25 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 AutoCompleteTextView actv;
 String selectedSymbol="";
 String[] country_names;
 ListView favlistview;
+boolean isFavListLoaded=false;
+ArrayList<FavoritesInfo> favInfoFromPreference;
+    ArrayAdapter<FavoritesInfo> favListAdapter;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(isFavListLoaded) {
+            favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
+            favlistview.setAdapter(new CustomFavListAdapter());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,8 +119,40 @@ ListView favlistview;
                 selectedSymbol="";
             }
         });
-    //Favorite Listview
+        //Favorite Listview
         favlistview=(ListView)findViewById(R.id.favoriteslist);
+        if(!isFavListLoaded) {
+            favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
+            favListAdapter = new CustomFavListAdapter();
+            favlistview.setAdapter(favListAdapter);
+            isFavListLoaded=true;
+        }
+    }
+    private class CustomFavListAdapter extends ArrayAdapter<FavoritesInfo> {
+        public CustomFavListAdapter() {
+                super(MainActivity.this, R.layout.favlist, favInfoFromPreference);
+        }
 
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView=convertView;
+            if(itemView==null){
+                itemView=getLayoutInflater().inflate(R.layout.favlist,parent,false);
+            }
+            FavoritesInfo favinfo = favInfoFromPreference.get(position);
+            TextView symbol=(TextView)itemView.findViewById(R.id.favsymbol);
+            symbol.setText(favinfo.getSymbol());
+            TextView price=(TextView)itemView.findViewById(R.id.favprice);
+            price.setText(favinfo.getPrice());
+            TextView change=(TextView)itemView.findViewById(R.id.favchange);
+            change.setText(favinfo.getChange()+" ("+favinfo.getChangeperc()+"%)");
+            if(Float.parseFloat(favinfo.getChange())<0){
+                change.setTextColor(Color.RED);
+            }else{
+                change.setTextColor(Color.GREEN);
+            }
+            return itemView;
+        }
     }
 }

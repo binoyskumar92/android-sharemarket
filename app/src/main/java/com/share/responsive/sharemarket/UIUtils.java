@@ -7,6 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Map;
+
 /**
  * Created by Binoy on 11/20/2017.
  */
@@ -67,5 +72,15 @@ public class UIUtils {
     public static String getFavFromSharedPreference(String key){
        return pref.getString(key,null);
 
+    }
+    public static ArrayList<FavoritesInfo> getAllItemsfromSharedPreference(){
+        ArrayList<FavoritesInfo> favoritesInfos=new ArrayList<>();
+        Map<String, ?> allEntries = pref.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+           // Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
+            Gson gson = new Gson();
+            favoritesInfos.add(gson.fromJson(getFavFromSharedPreference(entry.getKey()), FavoritesInfo.class));
+        }
+        return favoritesInfos;
     }
 }
