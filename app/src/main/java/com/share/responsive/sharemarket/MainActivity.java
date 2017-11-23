@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar pgbRefresh;
     int favoriteAutoRefreshedCount = 0;
     ImageButton singlrefresh;
+    Spinner sortby,orderby;
+    ArrayAdapter<CharSequence> sortbyAdapter,orderbyAdapter;
 
     @Override
     protected void onStart() {
@@ -177,6 +180,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //OrderBy Sortby spinners
+        sortby = (Spinner)findViewById(R.id.sortby);
+        orderby = (Spinner)findViewById(R.id.orderby);
+        sortbyAdapter = ArrayAdapter.createFromResource(MainActivity.this,R.array.sortby,android.R.layout.simple_spinner_item);
+        orderbyAdapter = ArrayAdapter.createFromResource(MainActivity.this,R.array.orderby,android.R.layout.simple_spinner_item);
+        sortbyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        orderbyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortby.setAdapter(sortbyAdapter);
+        orderby.setAdapter(orderbyAdapter);
+        sortby.setSelection(0,false);
+        orderby.setSelection(0,false);
 
         //Manual single refresh
         singlrefresh=(ImageButton)findViewById(R.id.singlerefresh);

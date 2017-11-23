@@ -12,6 +12,16 @@
         <item>BBANDS</item>
         <item>MACD</item>
     </string-array>
+    <string-array name="sortby">
+        <item>Default</item>
+        <item>Symbol</item>
+        <item>Price</item>
+        <item>Change</item>
+    </string-array>
+    <string-array name="orderby">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
