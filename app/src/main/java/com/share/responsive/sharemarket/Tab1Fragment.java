@@ -133,7 +133,7 @@ public class Tab1Fragment extends Fragment{
                 changeButton.setTextColor(Color.GRAY);
             }
         });
-
+        favorties.setEnabled(false);
        favorties.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
@@ -202,7 +202,6 @@ public class Tab1Fragment extends Fragment{
         graphview.loadUrl("file:///android_asset/drawgraph.html");
     }
 
-
     public Activity getCurrentActivity(){
         return getActivity();
     }
@@ -211,6 +210,7 @@ public class Tab1Fragment extends Fragment{
         ArrayAdapter<StockData> customAdapter = new CustomAdapter();
         stocklist.setAdapter(customAdapter);
         UIUtils.setListViewHeightBasedOnItems(stocklist);
+        favorties.setEnabled(true);
     }
 
     private void populateList() {

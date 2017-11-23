@@ -77,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
         favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
         favlistview.invalidateViews();
         favlistview.invalidate();
-
         favlistview.setAdapter(new CustomFavListAdapter());
-
     }
 
     @Override
