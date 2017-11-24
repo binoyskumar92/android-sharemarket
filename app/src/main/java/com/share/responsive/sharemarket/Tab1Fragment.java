@@ -64,9 +64,12 @@ public class Tab1Fragment extends Fragment{
     ProgressBar pgbStockData;
     String selectedIndicator;
     WebView graphview;
+    TextView errortvtab1;
     private boolean isWebViewLoaded=false;
     private boolean eventRegistered =false;
     String graphImageUrl="";
+    private boolean isErrorResponse=false;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -106,6 +109,7 @@ public class Tab1Fragment extends Fragment{
         indicatorSpinner.setAdapter(spinnerAdapter);
         indicatorSpinner.setSelection(0,false);
         symbol=getArguments().getString("symbol");
+        errortvtab1 = (TextView)view.findViewById(R.id.errortvtab1);
 
         indicatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -186,9 +190,19 @@ public class Tab1Fragment extends Fragment{
                 initializeList();
                 initializeGraphView();
             }
+        }else if(isErrorResponse){
+            showErrorandDisableProgressbar();
+
         }
         return view;
     }
+
+    private void showErrorandDisableProgressbar() {
+        pgbStockData.setVisibility(View.INVISIBLE);
+        errortvtab1.setVisibility(View.VISIBLE);
+        errortvtab1.setText("Failed to load data");
+    }
+
     private void setFavoriteStatefromSharedPreference(){
         if(UIUtils.getFavFromSharedPreference(symbol)!=null){
             favorties.setImageResource(R.drawable.filled);
@@ -253,9 +267,10 @@ public class Tab1Fragment extends Fragment{
     public void onEvent(StockDataReceivedEvent event) {
         //Toast.makeText(getActivity(),"Data Received from eventbus", Toast.LENGTH_LONG).show();
         if(event.stockData.equalsIgnoreCase("Server Timeout. Try again later.") || event.stockData.equals("{}")){
-            Toast.makeText(getActivity(),"Server error. Try again later.", Toast.LENGTH_LONG).show();
-            pgbStockData.setVisibility(View.INVISIBLE);
-        }else {
+            showErrorandDisableProgressbar();
+            isErrorResponse = true;
+        }
+        else {
             stockDataRecevied = event.stockData;
             parseData(stockDataRecevied);
             populateList();

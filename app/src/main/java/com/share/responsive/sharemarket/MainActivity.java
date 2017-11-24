@@ -76,13 +76,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void redrawFavList() {
-        favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
-        favlistview.invalidateViews();
-        favlistview.invalidate();
-        favlistview.setAdapter(new CustomFavListAdapter());
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
         getquote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                    selectedSymbol = actv.getEditableText().toString().split("-")[0].trim();
+
                 if (selectedSymbol != "") {
                     Bundle bundle = new Bundle();
                     bundle.putString("symbol", selectedSymbol);
@@ -216,6 +212,12 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(favlistview);
     }
 
+    private void redrawFavList() {
+        favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
+        favlistview.invalidateViews();
+        favlistview.invalidate();
+        favlistview.setAdapter(new CustomFavListAdapter());
+    }
     private void refreshFavList() {
         ArrayList<FavoritesInfo> listFavItems = UIUtils.getAllItemsfromSharedPreference();
         for (int i = 0; i < listFavItems.size(); i++) {

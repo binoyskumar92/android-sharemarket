@@ -71,7 +71,12 @@ public class DetailsActivity extends AppCompatActivity {
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, TIME_SERIES_URL+symbol, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                EventBus.getDefault().post(new StockDataReceivedEvent(response.toString()));
+                if(!response.has("Error Message")) {
+                    EventBus.getDefault().post(new StockDataReceivedEvent(response.toString()));
+                }else{
+                    EventBus.getDefault().post(new StockDataReceivedEvent("Server Timeout. Try again later."));
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override

@@ -14,8 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,7 +48,10 @@ public class Tab3Fragment extends Fragment {
     String symbol;
     JSONObject newsData;
     ArrayList<NewsFeed> newsfeed;
+    TextView errortvtab3;
+    ProgressBar pgbNews;
     boolean isNewsDataRequested = false;
+    private boolean isErrorResponse=false;
 
     @Override
     public void onAttach(Context context) {
@@ -57,6 +60,25 @@ public class Tab3Fragment extends Fragment {
             requestNewsData();
             isNewsDataRequested = true;
         }
+    }
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.tab3_fragment, container, false);
+        symbol = getArguments().getString("symbol");
+        newsList = (ListView) view.findViewById(R.id.news);
+        errortvtab3=(TextView)view.findViewById(R.id.errortvtab3);
+        pgbNews=(ProgressBar)view.findViewById(R.id.pgbNews);
+
+        if(newsfeed!=null){
+            initializeNewsList();
+            pgbNews.setVisibility(View.INVISIBLE);
+        }else if(isErrorResponse){
+            pgbNews.setVisibility(View.INVISIBLE);
+            errortvtab3.setVisibility(View.VISIBLE);
+            errortvtab3.setText("Failed to load data");
+        }
+        return view;
     }
 
     private void initializeNewsList() {
@@ -82,6 +104,7 @@ public class Tab3Fragment extends Fragment {
                             newsData = xmlToJson.toJson();
                             parseJsonNews(newsData);
                             initializeNewsList();
+                            pgbNews.setVisibility(View.INVISIBLE);
                         } catch (Exception e) {
                             e.printStackTrace();
                             ;
@@ -92,7 +115,11 @@ public class Tab3Fragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, "onErrorResponse: News" + error.getMessage());
-                        Toast.makeText(getActivity(), "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
+                        errortvtab3.setVisibility(View.VISIBLE);
+                        errortvtab3.setText("Failed to load data");
+                        pgbNews.setVisibility(View.INVISIBLE);
+                        isErrorResponse=true;
+                        // Toast.makeText(getActivity(), "Server error. Please try again later.", Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -136,17 +163,7 @@ public class Tab3Fragment extends Fragment {
 
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab3_fragment, container, false);
-        symbol = getArguments().getString("symbol");
-        newsList = (ListView) view.findViewById(R.id.news);
-        if(newsfeed!=null){
-            initializeNewsList();
-        }
-        return view;
-    }
+
     public Activity getCurrentActivity(){
         return getActivity();
     }
