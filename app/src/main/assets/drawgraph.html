@@ -6,10 +6,38 @@
 </head>
 <script>
 	self=this;
+	imageUrl="";
 	aTimeSeries = [];
 	self.searchText=androidMethod.getSymbol();
 	self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
 	Math.log10 = function (x) { return Math.log(x) / Math.LN10; };
+
+ function getChartImageUrl(){
+        return imageUrl+"";
+    }
+        function getImageUrlFromHighChart() {
+        if (!!aChart) {
+
+                var obj = {},
+
+                exportUrl = "http://export.highcharts.com/";
+                obj.options = JSON.stringify(aChart.userOptions);
+                obj.type = 'image/png';
+                obj.async = true;
+
+                $.ajax({
+                    type: 'post',
+                    url: 'http://export.highcharts.com/',
+                    data: obj,
+                    success: function (data) {
+                        imageUrl = exportUrl + data;
+                    }
+                });
+
+
+
+        }
+    }
 
 	function returnStuff(x)
 	{return x;}
@@ -24,6 +52,7 @@
 		//getRemoteData(self.searchText);
 		//self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
 		setPriceVolumeGraph();
+		getImageUrlFromHighChart();
 	}
 	    function getRemoteData(query) {
     
@@ -131,7 +160,7 @@
 
             }]
         });
-        self.showPrgIndicator = true;
+
     }
     function setHighStocks() {
 

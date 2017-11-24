@@ -4,6 +4,7 @@ package com.share.responsive.sharemarket;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -63,6 +66,7 @@ public class Tab1Fragment extends Fragment{
     WebView graphview;
     private boolean isWebViewLoaded=false;
     private boolean eventRegistered =false;
+    String graphImageUrl="";
     @Override
     public void onStart() {
         super.onStart();
@@ -72,7 +76,6 @@ public class Tab1Fragment extends Fragment{
         }
 
     }
-
 
     @Override
     public void onStop() {
@@ -117,7 +120,27 @@ public class Tab1Fragment extends Fragment{
 
             }
         });
+        fb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                graphview.evaluateJavascript("javascript:getChartImageUrl()", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String s) {
+                        graphImageUrl = s.substring(1,s.length()-1);
+                        Log.d(TAG, "onReceiveValue from webview: Graph loaded >>> "+graphImageUrl);
+                        if(isWebViewLoaded && !graphImageUrl.equals("")){
+                            ShareLinkContent content = new ShareLinkContent.Builder()
+                                    .setContentUrl(Uri.parse(graphImageUrl))
+                                    .build();
+                            ShareDialog shareDialog = new ShareDialog(getActivity());
+                            shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
 
+                        }
+                    }
+                });
+
+            }
+        });
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,6 +151,7 @@ public class Tab1Fragment extends Fragment{
                             Log.d(TAG, "onReceiveValue from webview: Graph loaded");
                         }
                     });
+
                 }
                 changeButton.setEnabled(false);
                 changeButton.setTextColor(Color.GRAY);

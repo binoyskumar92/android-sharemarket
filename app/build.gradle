@@ -30,4 +30,5 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.github.smart-fun:XmlToJson:1.4.1'
     compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

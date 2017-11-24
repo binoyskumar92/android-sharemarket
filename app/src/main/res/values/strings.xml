@@ -22,6 +22,7 @@
         <item>Ascending</item>
         <item>Descending</item>
     </string-array>
+    <string name="facebook_app_id">1208401619262081</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
