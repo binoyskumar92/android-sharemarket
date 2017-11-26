@@ -266,6 +266,12 @@ public class MainActivity extends AppCompatActivity {
             case "Symbol":
                 Collections.sort(favInfoFromPreference,FavoritesInfo.SymbolComparator);
                 break;
+            case "Price":
+                Collections.sort(favInfoFromPreference,FavoritesInfo.PriceComparator);
+                break;
+            case "Change":
+                Collections.sort(favInfoFromPreference,FavoritesInfo.ChangeComparator);
+                break;
         }
     }
 
@@ -379,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 change.setTextColor(Color.GREEN);
             }
-            itemView.setOnClickListener(new View.OnClickListener() {
+            symbol.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     loadDetailsActivity(favinfo.getSymbol());

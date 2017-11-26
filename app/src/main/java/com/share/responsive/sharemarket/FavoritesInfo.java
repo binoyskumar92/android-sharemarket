@@ -80,4 +80,44 @@ public class FavoritesInfo {
                 return symbol1.compareTo(symbol2);
             }
         }};
+
+    /*Comparator for sorting the list by Favorties Price*/
+    public static Comparator<FavoritesInfo> PriceComparator = new Comparator<FavoritesInfo>() {
+
+        public int compare(FavoritesInfo s1, FavoritesInfo s2) {
+            float price1 = Float.parseFloat(s1.getPrice());
+            float price2 = Float.parseFloat(s2.getPrice());
+
+            if(isDescending()) {
+                if (price2 < price1)
+                    return -1;
+                else
+                    return 1;
+            }else{
+                if (price1 < price2)
+                    return -1;
+                else
+                    return 1;
+            }
+        }};
+    /*Comparator for sorting the list by Favorties change*/
+    public static Comparator<FavoritesInfo> ChangeComparator = new Comparator<FavoritesInfo>() {
+
+        public int compare(FavoritesInfo s1, FavoritesInfo s2) {
+            float change1 = Float.parseFloat(s1.getChange());
+            float change2 = Float.parseFloat(s2.getChange());
+
+            if(isDescending()) {
+                if (change2 < change1)
+                    return -1;
+                else
+                    return 1;
+            }else{
+                if (change1 < change2)
+                    return -1;
+                else
+                    return 1;
+            }
+        }};
+
 }
