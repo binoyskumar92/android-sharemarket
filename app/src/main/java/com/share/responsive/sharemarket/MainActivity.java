@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
@@ -48,6 +49,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.greenrobot.event.EventBus;
 
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     ImageButton singlrefresh;
     Spinner sortby,orderby;
     ArrayAdapter<CharSequence> sortbyAdapter,orderbyAdapter;
+    private String sortbyParam = "";
+    private String orderByParam="";
 
     @Override
     protected void onStart() {
@@ -185,6 +189,35 @@ public class MainActivity extends AppCompatActivity {
         sortby.setSelection(0,false);
         orderby.setSelection(0,false);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            sortby.setTooltipText("checker");
+        }
+        sortby.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                 sortbyParam = adapterView.getItemAtPosition(position).toString();
+                redrawFavList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        orderby.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                orderByParam = adapterView.getItemAtPosition(position).toString();
+                redrawFavList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         //Manual single refresh
         singlrefresh=(ImageButton)findViewById(R.id.singlerefresh);
         singlrefresh.setOnClickListener(new View.OnClickListener() {
@@ -217,10 +250,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void redrawFavList() {
         favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
+        sortFavitems(favInfoFromPreference);
         favlistview.invalidateViews();
         favlistview.invalidate();
         favlistview.setAdapter(new CustomFavListAdapter());
     }
+
+    private void sortFavitems(ArrayList<FavoritesInfo> favInfoFromPreference) {
+        if(orderByParam.equals("Descending")) {
+            FavoritesInfo.setDescending(true);
+        }
+        switch (sortbyParam){
+            case "Default":
+                    break;
+            case "Symbol":
+                Collections.sort(favInfoFromPreference,FavoritesInfo.SymbolComparator);
+                break;
+        }
+    }
+
     private void refreshFavList() {
         ArrayList<FavoritesInfo> listFavItems = UIUtils.getAllItemsfromSharedPreference();
         for (int i = 0; i < listFavItems.size(); i++) {
