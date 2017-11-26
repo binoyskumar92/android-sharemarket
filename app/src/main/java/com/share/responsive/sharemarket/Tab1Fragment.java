@@ -363,9 +363,9 @@ public class Tab1Fragment extends Fragment{
                 timestamp = currDate + " 16:00:00 EST";
                 close = currClose;
             }
+        }
             stockTable.setTimestamp(timestamp);
             stockTable.setClose(roundTwoDecimals(Float.parseFloat(close))+"");
-        }
         } catch (ParseException e) {
             e.printStackTrace();
         }

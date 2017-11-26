@@ -134,11 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedSymbol = actv.getEditableText().toString().split("-")[0].trim();
 
                 if (selectedSymbol != "") {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("symbol", selectedSymbol);
-                    Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+                  loadDetailsActivity(selectedSymbol);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please select a valid symbol", Toast.LENGTH_SHORT).show();
                 }
@@ -210,6 +206,13 @@ public class MainActivity extends AppCompatActivity {
             isFavListLoaded = true;
         }
         registerForContextMenu(favlistview);
+    }
+    private void loadDetailsActivity(String symbol){
+        Bundle bundle = new Bundle();
+        bundle.putString("symbol", symbol);
+        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void redrawFavList() {
@@ -316,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
             if (itemView == null) {
                 itemView = getLayoutInflater().inflate(R.layout.favlist, parent, false);
             }
-            FavoritesInfo favinfo = favInfoFromPreference.get(position);
+            final FavoritesInfo favinfo = favInfoFromPreference.get(position);
             TextView symbol = (TextView) itemView.findViewById(R.id.favsymbol);
             symbol.setText(favinfo.getSymbol());
             TextView price = (TextView) itemView.findViewById(R.id.favprice);
@@ -328,6 +331,12 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 change.setTextColor(Color.GREEN);
             }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    loadDetailsActivity(favinfo.getSymbol());
+                }
+            });
             return itemView;
         }
     }
