@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if (isFavListLoaded) {
             redrawFavList();
+            favoriteAutoRefreshedCount = 0;
+            refreshFavList();
         }
     }
 
@@ -236,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
             favInfoFromPreference = UIUtils.getAllItemsfromSharedPreference();
             favListAdapter = new CustomFavListAdapter();
             favlistview.setAdapter(favListAdapter);
+
             isFavListLoaded = true;
         }
         registerForContextMenu(favlistview);
@@ -302,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "onErrorResponse: " + error);
+                pgbRefresh.setVisibility(View.GONE);
                 error.printStackTrace();
                 EventBus.getDefault().post(new StockDataReceivedEvent("Server Timeout. Refresh error."));
             }
