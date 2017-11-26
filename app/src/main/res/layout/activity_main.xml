@@ -79,6 +79,21 @@
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 
+    <TextView
+        android:id="@+id/autorefreshtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fav"
+        android:layout_alignEnd="@+id/clear"
+        android:layout_alignRight="@+id/clear"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="45dp"
+        android:layout_toLeftOf="@id/compatSwitch"
+        android:text="AutoRefresh"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/compatSwitch"
