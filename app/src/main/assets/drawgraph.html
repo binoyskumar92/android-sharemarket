@@ -8,6 +8,7 @@
 	self=this;
 	imageUrl="";
 	aTimeSeries = [];
+	self.aIndicatorData={};
 	self.searchText=androidMethod.getSymbol();
 	self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
 	Math.log10 = function (x) { return Math.log(x) / Math.LN10; };
@@ -231,6 +232,133 @@
                 }]
             });
         }
+    }
+
+      //Indicators
+    function webViewIndicatorLoad(symbol,indicator){
+            self.searchText=symbol;
+            if(indicator == 'STOCH'){
+            loadIndicatorChart(indicator,2);
+            }else if(indicator == 'BBANDS'||indicator == 'MACD'){
+               loadIndicatorChart(indicator,3);
+            }else{
+                loadIndicatorChart(indicator,1);
+            }
+    }
+        function loadIndicatorChart(indicator, numofplots) {
+        var sIndicator = indicator;
+        var iNumofplots = numofplots;
+        if (!self.aIndicatorData[indicator]) {
+            if (!!self.searchText) {
+                 $.ajax('http://sharemarkethw-env.us-east-1.elasticbeanstalk.com/indicator?symbol=' + self.searchText + '&indicator=' + sIndicator, {
+                 crossDomain: true,
+                 error: function () {  },
+                success: function (data) {
+                 self.aIndicatorData[indicator] = data;
+                 drawIndicatorChart(self.aIndicatorData[indicator], sIndicator, iNumofplots);
+                  }
+               });
+
+
+            }
+        }else {
+            drawIndicatorChart(self.aIndicatorData[indicator], sIndicator, iNumofplots)
+        }
+    }
+
+    function drawIndicatorChart(sJsonResponse, sIndicatorName, iNumberofPlots) {
+        var aPlotSeries = [];
+        var oPlotSeries = {};
+        var aChartData = getIndicatorChartData(sJsonResponse, sIndicatorName, iNumberofPlots);
+        for (var i = 0; i < iNumberofPlots; i++) {
+            oPlotSeries = {};
+            oPlotSeries.type = 'line',
+                oPlotSeries.data = aChartData.indicatorData[i].slice().reverse(),
+                oPlotSeries.marker = {},
+                oPlotSeries.marker.enabled = false,
+                oPlotSeries.marker.radius = 2,
+                oPlotSeries.lineColor = Highcharts.getOptions().colors[i],
+                oPlotSeries.color = Highcharts.getOptions().colors[i],
+                oPlotSeries.fillOpacity = 0.5,
+                oPlotSeries.lineWidth = 0.8,
+                oPlotSeries.name = aChartData.labels[i],
+                aPlotSeries.push(oPlotSeries);
+        }
+        var iYmin = "";
+        if (sIndicatorName == "STOCH") {
+            iYmin = parseInt(Math.min.apply(null, aChartData.indicatorData[1]) - 5);
+        } else if (sIndicatorName == "BBANDS") {
+            iYmin = parseInt(Math.min.apply(null, aChartData.indicatorData[1]) - 5);
+        } else {
+            iYmin = parseInt(Math.min.apply(null, aChartData.indicatorData[0]) - 5);
+        }
+        aChart = Highcharts.chart('id_highchartgraph', {
+            chart: {
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift'
+            },
+            title: {
+                text: aChartData.indicatorTitle
+            },
+            subtitle: {
+                text: '<a href="https://www.alphavantage.co/" target="_blank">Source : Alpha Vantage</a>',
+                useHTML: true
+            },
+            xAxis: {
+                type: 'datetime',
+                categories: aDates.slice().reverse(),
+                tickInterval: 5,
+                tickPixelInterval: 20
+            }, yAxis: [{
+                min: iYmin,
+                startOnTick: false,
+
+                endOnTick: true,
+                title: {
+                    text: sIndicatorName
+                },
+                labels: {
+                    format: '{value}'
+                }
+            }], legend: {
+                enabled: true,
+            },
+            tooltip: {
+                xDateFormat: '%m/%d'
+            },
+            series: aPlotSeries
+        });
+        getImageUrlFromHighChart();
+
+    }
+function getIndicatorChartData(sJsonResponse, sIndicatorName, iNumberofPlots) {
+        //get sixmonths values
+        var aIndicatorValues = [];
+        for (var j = 0; j < iNumberofPlots; j++) {
+            aIndicatorValues.push([]);
+        }
+        if (!!sJsonResponse) {
+            if (!!sJsonResponse[Object.keys(sJsonResponse)[1]]) {
+                var aDateKeys = Object.keys(sJsonResponse[Object.keys(sJsonResponse)[1]]);
+                var i = 0, sDateValue, iNumberofProperties, dDate, aProperties, sIndicatorTitle;
+                sIndicatorTitle = sJsonResponse[Object.keys(sJsonResponse)[0]]["2: Indicator"];
+                aProperties = Object.keys(sJsonResponse[Object.keys(sJsonResponse)[1]][aDateKeys[1]]);
+                while (i < 135) {
+                    //dDate = new Date(aDateKeys[i]);
+                    sDateValue = sJsonResponse[Object.keys(sJsonResponse)[1]][aDateKeys[i++]];
+                    if (!!sDateValue) {
+                        for (var j = 0; j < iNumberofPlots; j++) {
+                            aIndicatorValues[j].push((parseFloat(sDateValue[aProperties[j]])).toFixed(2) / 1);
+                        }
+                    } else {
+                        break;
+                    }
+
+                }
+            }
+        }
+        return { indicatorData: aIndicatorValues, labels: aProperties, indicatorTitle: sIndicatorTitle };
     }
 </script>
 <body>

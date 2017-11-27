@@ -61,8 +61,8 @@ public class Tab1Fragment extends Fragment{
     Spinner indicatorSpinner;
     ListView stocklist;
     String symbol="";
-    ProgressBar pgbStockData;
-    String selectedIndicator;
+    ProgressBar pgbStockData,pgbCharts;
+    String selectedIndicator="Price";
     WebView graphview;
     TextView errortvtab1;
     private boolean isWebViewLoaded=false;
@@ -92,6 +92,7 @@ public class Tab1Fragment extends Fragment{
         EventBus.getDefault().unregister(this);
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -100,6 +101,7 @@ public class Tab1Fragment extends Fragment{
        favorties=(ImageButton)view.findViewById(R.id.favorites);
         stocklist=(ListView)view.findViewById(R.id.stocklist);
         pgbStockData=(ProgressBar)view.findViewById(R.id.stockProgressBar);
+        pgbCharts=(ProgressBar)view.findViewById(R.id.pgbCharts);
         changeButton = (Button)view.findViewById(R.id.change);
         graphview = (WebView)view.findViewById(R.id.graphview);
 
@@ -148,11 +150,20 @@ public class Tab1Fragment extends Fragment{
         changeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                pgbCharts.setVisibility(View.VISIBLE);
                 if(isWebViewLoaded){
-                    graphview.evaluateJavascript("javascript:drawgraph()", new ValueCallback<String>() {
+                    String invokerFunction="";
+                        if(selectedIndicator.equals("Price")){
+                            invokerFunction = "javascript:drawgraph()";
+                        }else{
+                            invokerFunction = "javascript:webViewIndicatorLoad('"+symbol+"','"+selectedIndicator+"')";
+                        }
+
+                    graphview.evaluateJavascript(invokerFunction, new ValueCallback<String>() {
                         @Override
                         public void onReceiveValue(String s) {
-                            Log.d(TAG, "onReceiveValue from webview: Graph loaded");
+                            Log.d(TAG, "onReceiveValue from webview: Graph in webview loaded");
+                            pgbCharts.setVisibility(View.INVISIBLE);
                         }
                     });
 
