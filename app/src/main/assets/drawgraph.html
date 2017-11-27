@@ -8,6 +8,7 @@
 	self=this;
 	imageUrl="";
 	aTimeSeries = [];
+	aDates = [];
 	self.aIndicatorData={};
 	self.searchText=androidMethod.getSymbol();
 	self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
@@ -16,6 +17,23 @@
  function getChartImageUrl(){
         return imageUrl+"";
     }
+        function setDates(){
+       if (!!self.sTimeSeriesData && !aDates) {
+            var oStockData = self.sTimeSeriesData;
+            var dCurrDate = "";
+            var sTimeSeries = "Time Series (Daily)";
+            for (var i = 0; i < 135; i++) {
+                dCurrDate = Object.keys(oStockData["Time Series (Daily)"])[i];
+                if (!!dCurrDate) {
+                    aDates.push(dCurrDate.split("-")[1] + "/" + dCurrDate.split("-")[2]);
+                } else {
+                    break;
+                }
+
+            }
+        }
+        }
+
         function getImageUrlFromHighChart() {
         if (!!aChart) {
 
@@ -237,6 +255,7 @@
       //Indicators
     function webViewIndicatorLoad(symbol,indicator){
             self.searchText=symbol;
+            setDates();
             if(indicator == 'STOCH'){
             loadIndicatorChart(indicator,2);
             }else if(indicator == 'BBANDS'||indicator == 'MACD'){
