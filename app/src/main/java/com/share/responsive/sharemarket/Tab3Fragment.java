@@ -149,12 +149,20 @@ public class Tab3Fragment extends Fragment {
         try {
             newsfeed = new ArrayList<NewsFeed>();
             JSONArray newsContent = newsData.getJSONObject("rss").getJSONObject("channel").getJSONArray("item");
-            for (int i = 0; i < 5; i++) {
-
-                newsfeed.add(new NewsFeed(newsContent.getJSONObject(i).getString("title"),
-                        newsContent.getJSONObject(i).getString("sa:author_name"),
-                        newsContent.getJSONObject(i).getString("pubDate"),
-                        newsContent.getJSONObject(i).getString("link")));
+            int i=0,j=0;
+            while(j<5){
+                if(newsContent.getJSONObject(i).has("title")) {
+                    if (newsContent.getJSONObject(i).getString("link").contains("https://seekingalpha.com/article/")) {
+                        newsfeed.add(new NewsFeed(newsContent.getJSONObject(i).getString("title"),
+                                newsContent.getJSONObject(i).getString("sa:author_name"),
+                                newsContent.getJSONObject(i).getString("pubDate"),
+                                newsContent.getJSONObject(i).getString("link")));
+                        j++;
+                    }
+                }else{
+                    break;
+                }
+                i++;
             }
 
         } catch (JSONException e) {
