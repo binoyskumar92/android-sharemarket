@@ -122,21 +122,22 @@
         android:id="@+id/sortby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/getquote"
-        android:layout_alignStart="@+id/getquote"
-        android:layout_alignTop="@+id/orderby"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp"
-        android:autofillHints="hello"/>
+        android:layout_below="@+id/fav"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:autofillHints="hello" />
 
     <Spinner
         android:id="@+id/orderby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/compatSwitch"
-        android:layout_alignStart="@+id/compatSwitch"
-        android:layout_below="@+id/compatSwitch"
-        android:layout_marginTop="33dp" />
+        android:layout_alignLeft="@+id/autorefreshtext"
+        android:layout_alignStart="@+id/autorefreshtext"
+        android:layout_below="@+id/autorefreshtext"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        />
 
     <ListView
         android:id="@+id/favoriteslist"

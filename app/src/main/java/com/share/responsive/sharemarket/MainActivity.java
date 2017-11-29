@@ -186,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         orderbyAdapter = ArrayAdapter.createFromResource(MainActivity.this,R.array.orderby,android.R.layout.simple_spinner_item);
         sortbyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         orderbyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        orderby.setEnabled(false);
         sortby.setAdapter(sortbyAdapter);
         orderby.setAdapter(orderbyAdapter);
         sortby.setSelection(0,false);
@@ -198,7 +199,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                  sortbyParam = adapterView.getItemAtPosition(position).toString();
-                redrawFavList();
+                 if(sortbyParam.equals("Default")){
+                     orderby.setEnabled(false);
+                 }else{
+                     orderby.setEnabled(true);
+                 }
+                 redrawFavList();
             }
 
             @Override
