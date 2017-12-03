@@ -61,7 +61,8 @@ public class Tab1Fragment extends Fragment{
     Spinner indicatorSpinner;
     ListView stocklist;
     String symbol="";
-    ProgressBar pgbStockData,pgbCharts;
+    ProgressBar pgbStockData;
+    public static ProgressBar pgbCharts;
     String selectedIndicator="Price";
     WebView graphview;
     TextView errortvtab1;
@@ -163,7 +164,7 @@ public class Tab1Fragment extends Fragment{
                         @Override
                         public void onReceiveValue(String s) {
                             Log.d(TAG, "onReceiveValue from webview: Graph in webview loaded");
-                            pgbCharts.setVisibility(View.INVISIBLE);
+                            //pgbCharts.setVisibility(View.INVISIBLE);
                         }
                     });
 

@@ -1,5 +1,6 @@
 package com.share.responsive.sharemarket;
 
+import android.view.View;
 import android.webkit.JavascriptInterface;
 
 /**
@@ -26,5 +27,9 @@ public class WebViewMethods {
     @JavascriptInterface
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+    @JavascriptInterface
+    public void hidePgb() {
+        Tab1Fragment.pgbCharts.setVisibility(View.INVISIBLE);
     }
 }

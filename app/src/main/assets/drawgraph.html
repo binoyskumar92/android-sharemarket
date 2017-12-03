@@ -72,6 +72,7 @@
 		//self.sTimeSeriesData = JSON.parse(androidMethod.getStockdata());
 		setPriceVolumeGraph();
 		getImageUrlFromHighChart();
+		androidMethod.hidePgb();
 	}
 	    function getRemoteData(query) {
     
@@ -349,7 +350,7 @@
             series: aPlotSeries
         });
         getImageUrlFromHighChart();
-
+        androidMethod.hidePgb();
     }
 function getIndicatorChartData(sJsonResponse, sIndicatorName, iNumberofPlots) {
         //get sixmonths values
